@@ -1,0 +1,53 @@
+Comment/uncomment tags in the App.tsx page to view the design system and the demo site. Note that 'challengeIndex.tsx' is just a sandbox page, and only Home and Destinations are functional:
+
+I have began with Vite for the React-TS boilerplate:
+>npm install vite
+>npm init vite 'newProjectNameHere'
+
+Had a few errors come across as TS conflict errors, but they were all actually regular React syntax things such as hyphens etc.
+Some syntax errors might initally come across as TS conflicts, there are some strange genuine TS errors pertaining to objects and types to be aware of.
+
+I will begin by creating a new home page tsx. that will house everything, this is redundant, and just to keep App.tsx looking clean.
+The nav and home page contents will be broken into separate components; inside of which the src attribute within the <a> links has been changed out for an onClick that activates a useState setter.
+
+This is where we first run into the decision of "do we go with just useContext, or do we use React Router and keep our pages separate, or do we go with both, or do we find an alternative workaround?"
+
+Format For How Pictures Are Presented:
+    The srcset attribute takes a comma-separated list of image URLs, each with an x descriptor stating the device-pixel-ratio that that file is intended for. The src is there for browsers that don't understand srcset . The alt , of course, is included for browsers that don't render images at all.
+
+Main Menu and Destination Pages:
+    For Main Menu I am using useState with useContext, however for the destination page I am using a separate useContext there which is providing a useReducer, the contents of which are housed inside of DestReducer.tsx, and are exported for use by Destination.tsx
+
+The text for the planets in the destination menu have been moved to their own file, Planets.tsx and exported for use by Destination.tsx which will conditionally render them according to the reducer's state.
+    Note: All planet pictures were imported into Destination.tsx
+    The remaining content such as the planet picture and the tab selection, will be handled by inline accessing booleans from the state
+
+The way the background was worked into the design system didn't function the same way in React as it did in vanilla, so to remedy I have added some ternary conditionals to the className of an added wrapper div on the homePage.tsx, and also to the homeContent.tsx page. The former is scoped higher than the latter, and the latter is constrained by the smaller size of it's grid cell.
+The design system CSS uses the .main class for handling the background, so these swap between .main and a dummy class of "inactive".
+
+The way this design system was handling the burger icon doesn't mix with React, as it was using property selectors:  '.mobile-nav-toggle[aria-expanded="true"]'.
+    I will have to create two additional classes to then use a ternary and swap between them: .mobile-nav-toggle-1, and mobile-nav-toggle-2. 
+    The original class of mobile-nav-toggle must also stay applied to each, as it appears elsewhere in the css styling.
+
+Crew Page:
+    I have separated the crew text into their own components, however for this page I will go the simpler route of only using useState instead of useReducer, as all required functionality can be achieved here with ternary statements that all make use of a single useState variable
+
+Technology page:
+    My first hunch here was to go with setting the pictures within a div element as the background; due to the spec asking for an alternate picture set with different dimensions @ desktop size.
+    In an attempt to fully acommodate the accessability features, I tried doing this the same as the crew page, then using window.screen.width to get me a value I could use to toggle which picture set to use.
+        The problem with this is that the pictures will only change when the state is updated, which may be functional, but is not ideal, as there are cases where customers may resize the page on desktop.
+            Due to the rendering issue, I will revert back to the first idea, and include empty span elements with aria-labels instead. (<div><span class="background-image" role="img" aria-label="[alt text here]> </span></div>)
+                This would have been fine if there were not 3 different pictures, but getting the functionality this way soon becomes bloated.
+        I will now create a hook that utilizes 'window.matchMedia()'in order to give React the ability to media query, then will create two components housing the images which can then be rendred conditionally with a ternary.
+
+        The dot menu is also proving to be a problem, so this will also have to be made into two separate components and conditionally rendered as the way it stands all 3 buttons are stuck within a single grid cell, so the buttons will have to be separated.
+
+        Issues getting the images to size to spec within the grid, rather than fill the cell(because the img's dimensions are smaller than the cell's) the image stops expanding at it's full dimension size and trying to alter this value has no effect.
+        After much trouble, I set the max-width of the Pic's wrapper to 100% as well as selected the pic as child separately and put it's max-width to 100%, and only once both had this set would the picture expand it's size to fit the grid cell.
+
+** Updates: **
+
+    Changed the custom hamburger icon out for an animated one from the hamburger-react library.
+        This came with it's own boolean-only state, so that was added on top of our previous state, and the previous button tag was converted into a wrapper div for the new icon
+
+    
